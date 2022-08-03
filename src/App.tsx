@@ -1,31 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
-import BlocklyWorkspace from './components/BlocklyWorkspace';
+import BlocklyWoblocks from './components/BlocklyWoblocks';
 import { HeaderContent } from './components/HeaderContent';
+import { WollokObject } from './models/WollokObject';
 
-export class AppState {
-  readonly wollokObjects: string[] = ["pepita", "pepona", "fireRing"]
+class AppState {
+  wollokObjects: WollokObject[] = []
 
-  fireStateChange: ()=>void = ()=>{} //to be overriden later
-
-  addWollokObject(wObject: string) {
-    this.wollokObjects.push(wObject)
-    this.fireStateChange()
+  addWollokObject(wo: WollokObject): void {
+    
   }
 }
 
-function App() {
-  const [appState, setAppState] = useState(new AppState())
+export const AppContext = React.createContext({} as AppState)
 
-  appState.fireStateChange = () => setAppState(appState)
+function App() {
+  // initial global state
+  const appState: AppState = new AppState()
 
   return (
-    <div className="App">
-      <header>
-        <HeaderContent appState={appState}/>
-        <BlocklyWorkspace />
-      </header>
-    </div>
+    <AppContext.Provider value={appState}>
+        <HeaderContent />
+        <BlocklyWoblocks />
+    </AppContext.Provider>
   );
 }
 

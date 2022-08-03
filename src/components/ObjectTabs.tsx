@@ -1,36 +1,33 @@
 import { Tab, Tabs } from "@material-ui/core"
 import WollokIcon from "./WollokIcon"
-import { Whatshot as WhatshotIcon } from '@material-ui/icons'
 import AddObjectDialogButton from "./AddObjectDialogButton"
-import { AppState } from "../App"
 import { WollokObject } from "../models/WollokObject"
+import { useState } from "react"
+import { Whatshot } from "@material-ui/icons"
 
-type ObjectTabsProps = {
-    appState: AppState
-}
+export default function ObjectTabs () {
+    const mainTab = new WollokObject("stub", WollokIcon)
+    const wollokObjs = [mainTab, new WollokObject("fueguito", Whatshot)] // TODO: this is an example, should be taken from global state
+    const [currentTabId, setCurrentTabId] = useState(mainTab.id()) // TODO: probably this should be global state
 
-export default function ObjectTabs ({appState}: ObjectTabsProps) {
-
-    type ObjectTabProps = {
-        wollokObject: WollokObject,
-        selected?: boolean
+    const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
+        setCurrentTabId(tabId)
     }
-    
-    const ObjectTab = ({wollokObject, selected}: ObjectTabProps) => <>
-        <Tab icon={<WhatshotIcon />} />
-        selected && <AddObjectDialogButton 
-            onEditObject={(wollokObject) => appState.updateWollokObject(wollokObject)}
-        />
-    </>
 
     return <>
-        <Tabs variant="scrollable">
-            <Tab icon={<WollokIcon />} />
-            {appState.wollokObjects.map( wo => <ObjectTab wollokObject={wo} />)}
+        <Tabs 
+            value={currentTabId}
+            onChange={onTabSelected}
+            variant="scrollable"
+        >
+            {wollokObjs.map( wollokObject => 
+                <Tab 
+                    value={wollokObject.id()}
+                    icon={<wollokObject.Icon/>} 
+                    key={wollokObject.id()}
+                />
+            )}
         </Tabs>
-        <AddObjectDialogButton 
-            onNewObject={(wollokObject) => appState.addWollokObject(wollokObject)}
-        />
-    </>
-    
+        <AddObjectDialogButton />
+    </>  
 }
